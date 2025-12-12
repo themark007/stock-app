@@ -12,8 +12,9 @@ export default function startPriceSimulator(io, options = {}) {
   let timer = null;
 
   async function step() {
-    const client = await pool.connect();
+    let client;
     try {
+      client = await pool.connect();
       const res = await client.query(`
         SELECT s.id, s.ticker, p.price
         FROM stocks s
@@ -46,7 +47,7 @@ export default function startPriceSimulator(io, options = {}) {
     } catch (err) {
       console.error('priceSimulator step err', err);
     } finally {
-      client.release();
+      if (client) client.release();
     }
   }
 
@@ -54,8 +55,10 @@ export default function startPriceSimulator(io, options = {}) {
     start() {
       if (running) return;
       running = true;
-      step().catch(console.error);
-      timer = setInterval(() => step().catch(console.error), intervalMs);
+      // Don't run immediately, wait for server to be ready
+      timer = setInterval(() => step().catch((err) => {
+        console.error('priceSimulator error (continuing):', err.message);
+      }), intervalMs);
       console.log('price simulator started, intervalMs=', intervalMs);
     },
     stop() {

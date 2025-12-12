@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Environment variables
+.env
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor directories
+.vscode/
+.idea/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Test/Setup files (keeping them locally but not in repo)
+Backend/setup-database.js
+Backend/check-database.js
+Backend/list-users.js
+Backend/simple-test.js
+Backend/test-server.js
+Backend/create-test-user.js

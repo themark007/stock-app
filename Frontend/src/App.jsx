@@ -3,7 +3,7 @@ import './App.css'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import ProtectedRoute from './components/ProtectedRoute.jsx'
 import Dashboard from './components/Dashboard.jsx'
 import NotFound from './components/NotFound.jsx'
@@ -19,6 +19,9 @@ function App() {
    <>
       <Router>
         <Routes>
+          {/* Root Route - Redirect to Login */}
+          <Route path="/" element={<Navigate to="/login" replace />} />
+          
           {/* Public Routes */}
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />

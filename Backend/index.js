@@ -5,14 +5,15 @@ import dotenv from 'dotenv';
 import http from 'http';
 import { Server } from 'socket.io';
 
+dotenv.config();
+
+// Import routes after dotenv config
 import authRoutes from './routes/authRoutes.js';
 import stocksRoutes from './routes/stocks.js';
 import subscriptionsRoutes from './routes/subscriptions.js';
 
 import setupSockets from './sockets/index.js';
 import startPriceSimulator from './services/priceSimulator.js';
-
-dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -53,14 +54,45 @@ const io = new Server(server, {
 setupSockets(io);
 
 // ===============================
-// Start Price Simulator (1s interval)
-// ===============================
-const simulator = startPriceSimulator(io, { intervalMs: 1000 });
-simulator.start();
-
-// ===============================
 // Start Server
 // ===============================
 server.listen(PORT, () => {
   console.log(`🚀 Server running at http://localhost:${PORT}`);
+  console.log(`📝 API endpoints available:`);
+  console.log(`   POST /api/auth/signup`);
+  console.log(`   POST /api/auth/login`);
+  console.log(`   GET  /api/auth/getme`);
+  console.log(`   GET  /api/stocks`);
+  console.log(`   WebSocket available for real-time stock updates`);
+  
+  // Start Price Simulator after a short delay
+  setTimeout(() => {
+    console.log('📊 Starting price simulator...');
+    const simulator = startPriceSimulator(io, { intervalMs: 1000 });
+    simulator.start();
+  }, 3000);
 });
+
+// Log unexpected errors to diagnose early exits
+process.on('unhandledRejection', (reason) => {
+  console.error('❌ Unhandled Promise Rejection:', reason);
+  // Don't exit - keep server running
+});
+
+process.on('uncaughtException', (err) => {
+  console.error('❌ Uncaught Exception:', err);
+  // Don't exit - keep server running
+});
+
+process.on('exit', (code) => {
+  console.log(`Process exit event with code: ${code}`);
+});
+
+server.on('error', (err) => {
+  console.error('❌ HTTP Server Error:', err);
+});
+
+// Keep process alive
+setInterval(() => {
+  // Heartbeat to keep process running
+}, 1000000);

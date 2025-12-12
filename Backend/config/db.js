@@ -8,9 +8,15 @@ const { Pool } = pkg;
 // Neon requires SSL enabled
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false, // required for Neon PostgreSQL
-  },
+  ssl: process.env.DATABASE_URL?.includes('neon.tech') ? { rejectUnauthorized: false } : false,
+  connectionTimeoutMillis: 10000,
+  idleTimeoutMillis: 30000,
+  max: 10,
+});
+
+// Test connection on startup
+pool.on('error', (err) => {
+  console.error('❌ Unexpected database pool error:', err);
 });
 
 /**
