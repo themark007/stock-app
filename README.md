@@ -37,12 +37,14 @@ A modern, real-time stock trading dashboard built with React and Node.js that al
 - **JWT** - Authentication
 - **Bcrypt** - Password hashing
 
-## 📦 Installation
+## 📦 Installation & Deployment
 
 ### Prerequisites
-- Node.js (v16+)
+- Node.js (v18+)
 - npm or yarn
-- PostgreSQL database (Neon account)
+- PostgreSQL database (Neon, Render PostgreSQL, or any provider)
+
+### Local Development
 
 ### Setup
 
@@ -288,13 +290,45 @@ subscriptions (
 )
 ```
 
+## 🌐 Deployment
+
+### Deploy to Render
+
+This application is ready to deploy on Render with minimal configuration.
+
+**Quick Deploy:**
+1. Push code to GitHub
+2. Connect repository to Render
+3. Create Backend Web Service and Frontend Static Site
+4. Set environment variables
+5. Deploy!
+
+For detailed deployment instructions, see [DEPLOYMENT.md](./DEPLOYMENT.md)
+
+### Environment Variables Required
+
+**Backend:**
+```
+NODE_ENV=production
+DATABASE_URL=your_postgresql_url
+JWT_SECRET=your_secret_key
+FRONTEND_URL=https://your-frontend.onrender.com
+```
+
+**Frontend:**
+```
+VITE_API_URL=https://your-backend.onrender.com/api
+VITE_SOCKET_URL=https://your-backend.onrender.com
+```
+
 ## 🚀 Future Enhancements
 
-- [ ] Add historical price charts
+- [x] Real-time price charts with Recharts
+- [x] Professional black/blue UI design
 - [ ] Portfolio value calculation
 - [ ] Price alerts/notifications
 - [ ] More stocks support
-- [ ] Dark/light theme toggle
+- [ ] Historical data analysis
 - [ ] Mobile responsive design
 - [ ] Export portfolio data
 - [ ] Stock search functionality

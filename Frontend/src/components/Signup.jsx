@@ -4,6 +4,8 @@ import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
 import useUserStore from "../store/useUserStore";
 
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+
 export default function Signup() {
   const [formData, setFormData] = useState({
     username: "",
@@ -52,7 +54,7 @@ export default function Signup() {
 
     try {
       const res = await fetch(
-        "http://localhost:3000/api/auth/signup",
+        `${API_URL}/auth/signup`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

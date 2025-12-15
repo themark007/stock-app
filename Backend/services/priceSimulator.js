@@ -25,7 +25,7 @@ export default function startPriceSimulator(io, options = {}) {
 
       for (const row of res.rows) {
         let price = row.price !== null ? Number(row.price) : (100 + Math.random() * 1000);
-        const pctChange = (Math.random() * 0.04) - 0.02;
+        const pctChange = (Math.random() * 0.01) - 0.005;
         price = +(price * (1 + pctChange)).toFixed(2);
 
         await client.query(`

@@ -21,7 +21,14 @@ const PORT = process.env.PORT || 3000;
 // ===============================
 // Middleware
 // ===============================
-app.use(cors());
+const allowedOrigins = process.env.NODE_ENV === 'production' 
+  ? [process.env.FRONTEND_URL || 'https://your-frontend.onrender.com']
+  : ['http://localhost:5173', 'http://localhost:3000'];
+
+app.use(cors({
+  origin: allowedOrigins,
+  credentials: true
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -46,7 +53,8 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: '*', // set allowed frontend domains later
+    origin: allowedOrigins,
+    credentials: true
   }
 });
 

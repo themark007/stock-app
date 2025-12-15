@@ -8,8 +8,8 @@ import { useNavigate } from "react-router-dom";
 import io from "socket.io-client";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
-const BASE = "http://localhost:3000/api";
-const SOCKET_URL = "http://localhost:3000";
+const BASE = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || "http://localhost:3000";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -188,6 +188,12 @@ export default function Dashboard() {
         toast.info(`${ticker} already subscribed`);
       } else {
         toast.success(`${ticker} subscribed`);
+        
+        // Initialize chart data for newly subscribed stock
+        const currentStock = stocks.find(s => s.ticker === ticker);
+        if (currentStock?.price) {
+          updatePriceHistory(ticker, currentStock.price);
+        }
       }
 
       // refresh subscriptions (no signal needed here)
@@ -250,13 +256,13 @@ export default function Dashboard() {
       const history = prev[ticker] || [];
       const now = new Date();
       const newPoint = {
-        time: now.toLocaleTimeString(),
+        time: now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
         price: parseFloat(price),
         timestamp: now.getTime()
       };
       
-      // Keep last 20 data points
-      const updated = [...history, newPoint].slice(-20);
+      // Keep last 30 data points for better visualization
+      const updated = [...history, newPoint].slice(-30);
       return { ...prev, [ticker]: updated };
     });
   };
@@ -468,7 +474,8 @@ export default function Dashboard() {
                 <YAxis 
                   stroke="#6B7280"
                   style={{ fontSize: '12px' }}
-                  domain={['auto', 'auto']}
+                  domain={['dataMin - 5', 'dataMax + 5']}
+                  tickFormatter={(value) => `$${value.toFixed(2)}`}
                 />
                 <Tooltip 
                   contentStyle={{ 
@@ -680,7 +687,9 @@ const styles = {
   },
   miniChart: {
     marginTop: "16px",
-    opacity: 0.7,
+    opacity: 0.9,
+    cursor: "pointer",
+    padding: "8px 0",
   },
   stocksGrid: {
     display: "grid",
